@@ -67,7 +67,8 @@ export function EmployeeDashboard() {
             </div>
             {todaysAttendance?.checkInTime && (
               <p className="text-xs text-muted-foreground">
-                Checked in at {format(todaysAttendance.checkInTime, "p")}
+                In: {format(todaysAttendance.checkInTime, "p")}
+                {todaysAttendance.checkOutTime && ` | Out: ${format(todaysAttendance.checkOutTime, "p")}`}
               </p>
             )}
           </CardContent>
