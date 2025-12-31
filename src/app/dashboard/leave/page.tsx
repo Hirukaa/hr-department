@@ -51,6 +51,7 @@ export default function LeavePage() {
     const { user } = useAuth();
     const { toast } = useToast();
     const [userLeaveRequests, setUserLeaveRequests] = React.useState(leaveRequests.filter(lr => lr.employeeId === user?.employeeId));
+    const [isCalendarOpen, setIsCalendarOpen] = React.useState(false);
 
     const form = useForm<z.infer<typeof leaveFormSchema>>({
         resolver: zodResolver(leaveFormSchema),
@@ -113,7 +114,7 @@ export default function LeavePage() {
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
                                             <FormLabel>Leave Dates</FormLabel>
-                                            <Popover>
+                                            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
                                                         <Button
@@ -144,12 +145,13 @@ export default function LeavePage() {
                                                         initialFocus
                                                         mode="range"
                                                         defaultMonth={field.value?.from}
-                                                        selected={{from: field.value?.from, to: field.value?.to}}
-                                                        onSelect={(range: DateRange | undefined) => {
-                                                            if (range) {
-                                                                field.onChange(range);
+                                                        selected={field.value}
+                                                        onSelect={(range) => {
+                                                            field.onChange(range);
+                                                            if (range?.from && range?.to) {
+                                                              setIsCalendarOpen(false);
                                                             }
-                                                        }}
+                                                          }}
                                                         numberOfMonths={2}
                                                     />
                                                 </PopoverContent>
