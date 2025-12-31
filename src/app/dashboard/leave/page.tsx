@@ -23,19 +23,26 @@ import { leaveRequests } from "@/lib/data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
-import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 
 
 const leaveFormSchema = z.object({
-  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "A start date is required." }),
-  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "An end date is required." }),
+  startDate: z.date({
+    required_error: "A start date is required.",
+  }),
+  endDate: z.date({
+    required_error: "An end date is required.",
+  }),
   reason: z.string().min(10, {
     message: "Reason must be at least 10 characters.",
   }).max(200, {
     message: "Reason must not be longer than 200 characters.",
   }),
-}).refine(data => new Date(data.endDate) >= new Date(data.startDate), {
+}).refine(data => data.endDate >= data.startDate, {
     message: "End date cannot be before start date.",
     path: ["endDate"],
 });
@@ -49,8 +56,6 @@ export default function LeavePage() {
     const form = useForm<z.infer<typeof leaveFormSchema>>({
         resolver: zodResolver(leaveFormSchema),
         defaultValues: {
-            startDate: '',
-            endDate: '',
             reason: '',
         }
     });
@@ -61,14 +66,11 @@ export default function LeavePage() {
             return;
         }
         
-        const startDate = new Date(values.startDate);
-        const endDate = new Date(values.endDate);
-
         const result = await submitLeaveRequest({
             employeeId: user.employeeId,
             employeeName: user.email, // Or find employee name from employees list
-            startDate: startDate,
-            endDate: endDate,
+            startDate: values.startDate,
+            endDate: values.endDate,
             reason: values.reason,
         });
 
@@ -80,8 +82,8 @@ export default function LeavePage() {
               id: `leave-${Date.now()}`,
               employeeId: user.employeeId,
               employeeName: user.email,
-              startDate: startDate,
-              endDate: endDate,
+              startDate: values.startDate,
+              endDate: values.endDate,
               reason: values.reason,
               status: 'Pending'
             }]);
@@ -114,28 +116,84 @@ export default function LeavePage() {
                                         control={form.control}
                                         name="startDate"
                                         render={({ field }) => (
-                                            <FormItem className="flex flex-col flex-1">
-                                                <FormLabel>Start Date</FormLabel>
-                                                 <FormControl>
-                                                    <Input type="date" {...field} />
+                                          <FormItem className="flex flex-col flex-1">
+                                            <FormLabel>Start Date</FormLabel>
+                                            <Popover>
+                                              <PopoverTrigger asChild>
+                                                <FormControl>
+                                                  <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                      "pl-3 text-left font-normal",
+                                                      !field.value && "text-muted-foreground"
+                                                    )}
+                                                  >
+                                                    {field.value ? (
+                                                      format(field.value, "PPP")
+                                                    ) : (
+                                                      <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                  </Button>
                                                 </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
+                                              </PopoverTrigger>
+                                              <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                  mode="single"
+                                                  selected={field.value}
+                                                  onSelect={field.onChange}
+                                                  disabled={(date) =>
+                                                    date < new Date(new Date().setHours(0,0,0,0))
+                                                  }
+                                                  initialFocus
+                                                />
+                                              </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                          </FormItem>
                                         )}
-                                    />
+                                      />
                                     <FormField
                                         control={form.control}
                                         name="endDate"
                                         render={({ field }) => (
-                                            <FormItem className="flex flex-col flex-1">
-                                                <FormLabel>End Date</FormLabel>
-                                                 <FormControl>
-                                                    <Input type="date" {...field} min={form.watch('startDate')}/>
+                                          <FormItem className="flex flex-col flex-1">
+                                            <FormLabel>End Date</FormLabel>
+                                            <Popover>
+                                              <PopoverTrigger asChild>
+                                                <FormControl>
+                                                  <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                      "pl-3 text-left font-normal",
+                                                      !field.value && "text-muted-foreground"
+                                                    )}
+                                                  >
+                                                    {field.value ? (
+                                                      format(field.value, "PPP")
+                                                    ) : (
+                                                      <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                  </Button>
                                                 </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
+                                              </PopoverTrigger>
+                                              <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                  mode="single"
+                                                  selected={field.value}
+                                                  onSelect={field.onChange}
+                                                  disabled={(date) =>
+                                                    date < (form.watch('startDate') || new Date(new Date().setHours(0,0,0,0)))
+                                                  }
+                                                  initialFocus
+                                                />
+                                              </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                          </FormItem>
                                         )}
-                                    />
+                                      />
                                 </div>
                                 <FormField
                                     control={form.control}
