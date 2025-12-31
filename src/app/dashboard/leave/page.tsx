@@ -111,7 +111,7 @@ export default function LeavePage() {
                     <CardContent>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                                <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="flex flex-col sm:flex-row gap-4 items-end">
                                      <FormField
                                         control={form.control}
                                         name="startDate"
@@ -153,6 +153,7 @@ export default function LeavePage() {
                                           </FormItem>
                                         )}
                                       />
+                                      <div className="mx-4 text-muted-foreground hidden sm:block">to</div>
                                     <FormField
                                         control={form.control}
                                         name="endDate"
