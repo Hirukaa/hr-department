@@ -26,20 +26,20 @@ export async function checkInOrOut(request: CheckInRequest, type: 'in' | 'out') 
     return { success: false, message: "Employee not found or not enrolled." };
   }
 
-  // 1. Location Validation
-  const distance = getDistance(
-    request.location.latitude,
-    request.location.longitude,
-    OFFICE_COORDINATES.latitude,
-    OFFICE_COORDINATES.longitude
-  );
+  // 1. Location Validation - DISABLED FOR DEVELOPMENT
+  // const distance = getDistance(
+  //   request.location.latitude,
+  //   request.location.longitude,
+  //   OFFICE_COORDINATES.latitude,
+  //   OFFICE_COORDINATES.longitude
+  // );
 
-  if (distance > MAX_DISTANCE_METERS) {
-    return {
-      success: false,
-      message: `Location validation failed. You are ${Math.round(distance)} meters away from the office. Please be within ${MAX_DISTANCE_METERS}m.`,
-    };
-  }
+  // if (distance > MAX_DISTANCE_METERS) {
+  //   return {
+  //     success: false,
+  //     message: `Location validation failed. You are ${Math.round(distance)} meters away from the office. Please be within ${MAX_DISTANCE_METERS}m.`,
+  //   };
+  // }
   
   // 2. Face Verification
   const verificationInput: FaceVerificationInput = {
