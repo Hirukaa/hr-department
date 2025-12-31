@@ -1,7 +1,8 @@
+
 "use server";
 
 import { verifyFace, type FaceVerificationInput } from "@/ai/flows/face-verification";
-import { employees, mockAttendanceDB } from "@/lib/data";
+import { employees, mockAttendanceDB, mockLeaveDB } from "@/lib/data";
 import { getDistance } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -105,4 +106,28 @@ export async function checkInOrOut(request: CheckInRequest, type: 'in' | 'out') 
       message: "An unexpected error occurred. Please contact support.",
     };
   }
+}
+
+
+interface LeaveRequestInput {
+  employeeId: string;
+  employeeName: string;
+  startDate: Date;
+  endDate: Date;
+  reason: string;
+}
+
+export async function submitLeaveRequest(request: LeaveRequestInput) {
+    try {
+        const newLeaveRequest = {
+            id: `leave-${Date.now()}`,
+            ...request,
+            status: 'Pending' as const,
+        };
+        mockLeaveDB.push(newLeaveRequest);
+        return { success: true, message: 'Leave request submitted successfully!' };
+    } catch (error) {
+        console.error("Error submitting leave request:", error);
+        return { success: false, message: 'An unexpected error occurred. Please try again.' };
+    }
 }

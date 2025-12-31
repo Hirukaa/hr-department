@@ -1,3 +1,4 @@
+
 import { User, Employee, AttendanceRecord, LeaveRequest } from '@/types';
 import { format } from 'date-fns';
 
@@ -138,7 +139,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
 ];
 
-export const leaveRequests: LeaveRequest[] = [
+export let leaveRequests: LeaveRequest[] = [
   {
     id: 'leave-1',
     employeeId: 'emp-3',
