@@ -29,6 +29,7 @@ import { leaveRequests } from "@/lib/data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
+import type { DateRange } from "react-day-picker";
 
 const leaveFormSchema = z.object({
   dateRange: z.object({
@@ -143,8 +144,12 @@ export default function LeavePage() {
                                                         initialFocus
                                                         mode="range"
                                                         defaultMonth={field.value?.from}
-                                                        selected={{ from: field.value?.from, to: field.value?.to }}
-                                                        onSelect={field.onChange}
+                                                        selected={{from: field.value?.from, to: field.value?.to}}
+                                                        onSelect={(range: DateRange | undefined) => {
+                                                            if (range) {
+                                                                field.onChange(range);
+                                                            }
+                                                        }}
                                                         numberOfMonths={2}
                                                     />
                                                 </PopoverContent>
