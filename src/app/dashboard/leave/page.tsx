@@ -12,37 +12,30 @@ import * as z from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import { submitLeaveRequest } from "@/app/actions";
 import { leaveRequests } from "@/lib/data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+
 
 const leaveFormSchema = z.object({
-  startDate: z.date({
-    required_error: "A start date is required.",
-  }),
-  endDate: z.date({
-    required_error: "An end date is required.",
-  }),
+  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "A start date is required." }),
+  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "An end date is required." }),
   reason: z.string().min(10, {
     message: "Reason must be at least 10 characters.",
   }).max(200, {
     message: "Reason must not be longer than 200 characters.",
   }),
-}).refine(data => data.endDate >= data.startDate, {
+}).refine(data => new Date(data.endDate) >= new Date(data.startDate), {
     message: "End date cannot be before start date.",
     path: ["endDate"],
 });
@@ -55,6 +48,11 @@ export default function LeavePage() {
 
     const form = useForm<z.infer<typeof leaveFormSchema>>({
         resolver: zodResolver(leaveFormSchema),
+        defaultValues: {
+            startDate: '',
+            endDate: '',
+            reason: '',
+        }
     });
 
     const onSubmit = async (values: z.infer<typeof leaveFormSchema>) => {
@@ -62,12 +60,15 @@ export default function LeavePage() {
             toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in to submit a request.' });
             return;
         }
+        
+        const startDate = new Date(values.startDate);
+        const endDate = new Date(values.endDate);
 
         const result = await submitLeaveRequest({
             employeeId: user.employeeId,
             employeeName: user.email, // Or find employee name from employees list
-            startDate: values.startDate,
-            endDate: values.endDate,
+            startDate: startDate,
+            endDate: endDate,
             reason: values.reason,
         });
 
@@ -79,8 +80,8 @@ export default function LeavePage() {
               id: `leave-${Date.now()}`,
               employeeId: user.employeeId,
               employeeName: user.email,
-              startDate: values.startDate,
-              endDate: values.endDate,
+              startDate: startDate,
+              endDate: endDate,
               reason: values.reason,
               status: 'Pending'
             }]);
@@ -109,41 +110,15 @@ export default function LeavePage() {
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                 <div className="flex flex-col sm:flex-row gap-4">
-                                    <FormField
+                                     <FormField
                                         control={form.control}
                                         name="startDate"
                                         render={({ field }) => (
                                             <FormItem className="flex flex-col flex-1">
                                                 <FormLabel>Start Date</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <FormControl>
-                                                            <Button
-                                                                variant={"outline"}
-                                                                className={cn(
-                                                                    "w-full justify-start text-left font-normal",
-                                                                    !field.value && "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                {field.value ? (
-                                                                    format(field.value, "LLL dd, y")
-                                                                ) : (
-                                                                    <span>Pick a date</span>
-                                                                )}
-                                                            </Button>
-                                                        </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={field.value}
-                                                            onSelect={field.onChange}
-                                                            disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
+                                                 <FormControl>
+                                                    <Input type="date" {...field} />
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -154,37 +129,9 @@ export default function LeavePage() {
                                         render={({ field }) => (
                                             <FormItem className="flex flex-col flex-1">
                                                 <FormLabel>End Date</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <FormControl>
-                                                            <Button
-                                                                variant={"outline"}
-                                                                className={cn(
-                                                                    "w-full justify-start text-left font-normal",
-                                                                    !field.value && "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                {field.value ? (
-                                                                    format(field.value, "LLL dd, y")
-                                                                ) : (
-                                                                    <span>Pick a date</span>
-                                                                )}
-                                                            </Button>
-                                                        </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={field.value}
-                                                            onSelect={field.onChange}
-                                                            disabled={(date) =>
-                                                                date < (form.getValues("startDate") || new Date(new Date().setHours(0,0,0,0)))
-                                                              }
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
+                                                 <FormControl>
+                                                    <Input type="date" {...field} min={form.watch('startDate')}/>
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
