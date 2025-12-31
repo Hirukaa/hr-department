@@ -63,8 +63,15 @@ const faceVerificationFlow = ai.defineFlow(
     outputSchema: FaceVerificationOutputSchema,
   },
   async input => {
+    // DEVELOPMENT OVERRIDE: Force face verification to pass.
+    // TODO: Remove this override for production.
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        isMatch: true,
+        confidenceScore: 0.0,
+      };
+    }
     const {output} = await faceVerificationPrompt(input);
     return output!;
   }
 );
-
