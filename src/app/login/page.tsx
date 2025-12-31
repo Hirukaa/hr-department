@@ -52,7 +52,7 @@ export default function LoginPage() {
               {loading ? 'Signing In...' : 'Sign In'}
             </Button>
             <div className="text-center text-xs text-muted-foreground">
-              <p>Use: hr@facet.com, supervisor@facet.com, or employee@facet.com</p>
+              <p>Use: dev@facet.com, hr@facet.com, supervisor@facet.com, or employee@facet.com</p>
             </div>
           </form>
         </CardContent>

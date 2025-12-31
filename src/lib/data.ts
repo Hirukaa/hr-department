@@ -5,6 +5,7 @@ export const users: User[] = [
   { id: 'user-1', email: 'hr@facet.com', role: 'Admin HR', employeeId: 'emp-1' },
   { id: 'user-2', email: 'supervisor@facet.com', role: 'Supervisor', employeeId: 'emp-2' },
   { id: 'user-3', email: 'employee@facet.com', role: 'Employee', employeeId: 'emp-3' },
+  { id: 'user-4', email: 'dev@facet.com', role: 'Admin HR', employeeId: 'emp-6' },
 ];
 
 export const employees: Employee[] = [
@@ -61,6 +62,17 @@ export const employees: Employee[] = [
     status: 'Inactive',
     avatarUrl: 'https://picsum.photos/seed/emp5/100/100',
     email: 'ethan@facet.com',
+  },
+  {
+    id: 'emp-6',
+    internalId: 'FACET-006',
+    name: 'Dev User',
+    position: 'Developer',
+    department: 'Technology',
+    status: 'Active',
+    avatarUrl: 'https://picsum.photos/seed/emp6/100/100',
+    faceEmbedding: 'embedding_string_for_dev_user_1337',
+    email: 'dev@facet.com',
   },
 ];
 
