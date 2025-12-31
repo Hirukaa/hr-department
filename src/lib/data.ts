@@ -6,6 +6,8 @@ export const users: User[] = [
   { id: 'user-2', email: 'supervisor@facet.com', role: 'Supervisor', employeeId: 'emp-2' },
   { id: 'user-3', email: 'employee@facet.com', role: 'Employee', employeeId: 'emp-3' },
   { id: 'user-4', email: 'dev@facet.com', role: 'Admin HR', employeeId: 'emp-6' },
+  { id: 'user-5', email: 'admin@facet.com', role: 'Admin HR', employeeId: 'emp-7' },
+  { id: 'user-6', email: 'user@facet.com', role: 'Employee', employeeId: 'emp-8' },
 ];
 
 export const employees: Employee[] = [
@@ -73,6 +75,28 @@ export const employees: Employee[] = [
     avatarUrl: 'https://picsum.photos/seed/emp6/100/100',
     faceEmbedding: 'embedding_string_for_dev_user_1337',
     email: 'dev@facet.com',
+  },
+  {
+    id: 'emp-7',
+    internalId: 'FACET-007',
+    name: 'Admin User',
+    position: 'System Admin',
+    department: 'IT',
+    status: 'Active',
+    avatarUrl: 'https://picsum.photos/seed/emp7/100/100',
+    faceEmbedding: 'embedding_string_for_admin_user_1111',
+    email: 'admin@facet.com',
+  },
+  {
+    id: 'emp-8',
+    internalId: 'FACET-008',
+    name: 'Test User',
+    position: 'Quality Assurance',
+    department: 'Technology',
+    status: 'Active',
+    avatarUrl: 'https://picsum.photos/seed/emp8/100/100',
+    faceEmbedding: 'embedding_string_for_test_user_2222',
+    email: 'user@facet.com',
   },
 ];
 
