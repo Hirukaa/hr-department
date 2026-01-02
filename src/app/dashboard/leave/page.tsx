@@ -51,7 +51,11 @@ const leaveFormSchema = z.object({
 export default function LeavePage() {
     const { user } = useAuth();
     const { toast } = useToast();
-    const [userLeaveRequests, setUserLeaveRequests] = React.useState(() => leaveRequests.filter(lr => lr.employeeId === user?.employeeId));
+    const [userLeaveRequests, setUserLeaveRequests] = React.useState(() => 
+      leaveRequests
+        .filter(lr => lr.employeeId === user?.employeeId)
+        .sort((a, b) => b.startDate.getTime() - a.startDate.getTime())
+    );
 
     const form = useForm<z.infer<typeof leaveFormSchema>>({
         resolver: zodResolver(leaveFormSchema),
@@ -93,7 +97,12 @@ export default function LeavePage() {
     };
     
     // For HR Admin to see all requests
-    const allLeaveRequests = leaveRequests.sort((a,b) => b.startDate.getTime() - a.startDate.getTime());
+    const allLeaveRequests = React.useMemo(() => 
+      leaveRequests.sort((a,b) => b.startDate.getTime() - a.startDate.getTime()), 
+      // This dependency array should ideally update when `leaveRequests` updates.
+      // For this mock data, it runs once.
+      [leaveRequests] 
+    );
 
     return (
         <div className="space-y-6">
@@ -250,6 +259,13 @@ export default function LeavePage() {
                                     </TableCell>
                                 </TableRow>
                             ))}
+                             {(user?.role === 'Admin HR' ? allLeaveRequests : userLeaveRequests).length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={user?.role === 'Admin HR' ? 5 : 4} className="h-24 text-center">
+                                        No leave requests found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -257,4 +273,3 @@ export default function LeavePage() {
         </div>
     );
 }
-
