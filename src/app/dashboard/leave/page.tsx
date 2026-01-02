@@ -51,7 +51,7 @@ const leaveFormSchema = z.object({
 export default function LeavePage() {
     const { user } = useAuth();
     const { toast } = useToast();
-    const [userLeaveRequests, setUserLeaveRequests] = React.useState(leaveRequests.filter(lr => lr.employeeId === user?.employeeId));
+    const [userLeaveRequests, setUserLeaveRequests] = React.useState(() => leaveRequests.filter(lr => lr.employeeId === user?.employeeId));
 
     const form = useForm<z.infer<typeof leaveFormSchema>>({
         resolver: zodResolver(leaveFormSchema),
@@ -86,7 +86,7 @@ export default function LeavePage() {
               endDate: values.endDate,
               reason: values.reason,
               status: 'Pending'
-            }]);
+            }].sort((a, b) => b.startDate.getTime() - a.startDate.getTime()));
         } else {
             toast({ variant: 'destructive', title: 'Error', description: result.message });
         }
@@ -111,7 +111,7 @@ export default function LeavePage() {
                     <CardContent>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                                <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                <div className="flex flex-col sm:flex-row gap-4">
                                      <FormField
                                         control={form.control}
                                         name="startDate"
@@ -153,7 +153,6 @@ export default function LeavePage() {
                                           </FormItem>
                                         )}
                                       />
-                                      <div className="mx-4 text-muted-foreground hidden sm:block">to</div>
                                     <FormField
                                         control={form.control}
                                         name="endDate"
@@ -185,7 +184,7 @@ export default function LeavePage() {
                                                   selected={field.value}
                                                   onSelect={field.onChange}
                                                   disabled={(date) =>
-                                                    date < (form.watch('startDate') || new Date(new Date().setHours(0,0,0,0)))
+                                                    date < (form.getValues('startDate') || new Date(new Date().setHours(0,0,0,0)))
                                                   }
                                                   initialFocus
                                                 />
@@ -227,7 +226,7 @@ export default function LeavePage() {
                     <CardTitle>{user?.role === 'Admin HR' ? 'All Leave Requests' : 'Your Leave History'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Table>
+                     <Table>
                         <TableHeader>
                             <TableRow>
                                 { user?.role === 'Admin HR' && <TableHead>Employee</TableHead> }
@@ -258,3 +257,4 @@ export default function LeavePage() {
         </div>
     );
 }
+
