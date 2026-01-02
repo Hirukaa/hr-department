@@ -140,9 +140,6 @@ export default function LeavePage() {
                                               <PopoverContent className="w-auto p-0" align="start">
                                                 <Calendar
                                                   mode="single"
-                                                  captionLayout="dropdown-buttons"
-                                                  fromYear={new Date().getFullYear()}
-                                                  toYear={new Date().getFullYear() + 10}
                                                   selected={field.value}
                                                   onSelect={field.onChange}
                                                   disabled={(date) =>
@@ -156,7 +153,7 @@ export default function LeavePage() {
                                           </FormItem>
                                         )}
                                       />
-                                      
+                                      <div className="mx-4 text-muted-foreground hidden sm:block">to</div>
                                     <FormField
                                         control={form.control}
                                         name="endDate"
@@ -185,9 +182,6 @@ export default function LeavePage() {
                                               <PopoverContent className="w-auto p-0" align="start">
                                                 <Calendar
                                                   mode="single"
-                                                  captionLayout="dropdown-buttons"
-                                                  fromYear={new Date().getFullYear()}
-                                                  toYear={new Date().getFullYear() + 10}
                                                   selected={field.value}
                                                   onSelect={field.onChange}
                                                   disabled={(date) =>

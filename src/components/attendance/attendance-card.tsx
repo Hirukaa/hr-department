@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -106,7 +107,7 @@ export function AttendanceCard() {
         <CardContent className="flex flex-col sm:flex-row gap-4">
           <Button
             onClick={() => handleOpenModal("in")}
-            disabled={status !== "Absent"}
+            disabled={status === "Checked In" || status === "Checked Out"}
             className="w-full sm:w-auto flex-1 bg-primary hover:bg-primary/90"
             size="lg"
           >
